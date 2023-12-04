@@ -1,4 +1,4 @@
-package com.example.todoManager.Models;
+package com.example.todoManager.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

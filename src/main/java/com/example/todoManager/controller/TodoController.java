@@ -1,7 +1,8 @@
-package com.example.todoManager.Controller;
+package com.example.todoManager.controller;
 
-import com.example.todoManager.Models.Todo;
-import com.example.todoManager.Service.TodoService;
+import com.example.todoManager.exception.ResourceNotFoundException;
+import com.example.todoManager.models.Todo;
+import com.example.todoManager.service.TodoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,8 @@ public class TodoController {
         todo.setId(id);
         logger.info("create todo");
         return new ResponseEntity<>(todoService.createTodo(todo), HttpStatus.CREATED);
-
     }
+
     @GetMapping("/getAllTodos")
     public ResponseEntity<List<Todo>> getAllTodoHandler(){
         logger.info("Fetching all todos");
@@ -38,18 +39,18 @@ public class TodoController {
     @GetMapping("/getTodoById/{todoId}")
     public ResponseEntity<Todo> getSingleTodoHandler(@PathVariable int todoId){
         Todo fetchedTodo = todoService.getTodoById(todoId);
-        logger.info("Todo: {}, Country:{}",fetchedTodo,"UAE");
-        if(fetchedTodo != null){
-            return  new ResponseEntity<>(fetchedTodo,HttpStatus.OK);
+        if(fetchedTodo == null){
+            throw new ResourceNotFoundException("Todo not available");
         }
-        return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
-
+        logger.info("Todo: {}, Country:{}",fetchedTodo,"UAE");
+        return  new ResponseEntity<>(fetchedTodo,HttpStatus.OK);
     }
 
     @PutMapping("/updateTodo/{id}")
     public ResponseEntity<Todo> updateTodo(@RequestBody Todo todo, @PathVariable int id){
         return new ResponseEntity<>(todoService.updateTodoById(todo,id),HttpStatus.ACCEPTED);
     }
+
     @DeleteMapping("/deleteTodo/{id}")
     public ResponseEntity<String> deleteTodo(@PathVariable int id){
         todoService.deleteTodoById(id);
